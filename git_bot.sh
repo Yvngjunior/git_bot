@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # -----------------------------------
-# Git Bot - Automated Push (Normal Workflow)
+# Git Bot - Automated Push (Handles Remote Default README)
 # -----------------------------------
 
 # Step 1: Initialize Git repository if not already initialized
@@ -37,9 +37,10 @@ if ! git commit -m "$commit_msg"; then
     echo "⚠️ Nothing to commit. Skipping commit."
 fi
 
-# Step 6: Pull remote changes before pushing
-echo "Pulling remote changes to avoid non-fast-forward errors..."
-git pull origin main --allow-unrelated-histories 2>/dev/null || echo "No remote to pull from or nothing to merge"
+# Step 6: Fetch and merge remote changes to handle default README
+echo "Fetching and merging remote changes..."
+git fetch origin main
+git merge origin/main --allow-unrelated-histories --no-edit || echo "Merge complete or nothing to merge"
 
 # Step 7: Push to remote
 echo "Pushing to remote..."
