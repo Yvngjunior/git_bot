@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # -----------------------------------
-# Git Bot - Fully Automated Push
+# Git Bot - Automated Push (Normal Workflow)
 # -----------------------------------
 
 # Step 1: Initialize Git repository if not already initialized
@@ -33,16 +33,15 @@ if [ -z "$commit_msg" ]; then
     exit 1
 fi
 
-# Skip commit if nothing to commit
 if ! git commit -m "$commit_msg"; then
     echo "⚠️ Nothing to commit. Skipping commit."
 fi
 
-# Step 6: Pull remote first (handle unrelated histories)
-echo "Fetching remote changes..."
-git pull origin main --allow-unrelated-histories 2>/dev/null || echo "No remote to pull from"
+# Step 6: Pull remote changes before pushing
+echo "Pulling remote changes to avoid non-fast-forward errors..."
+git pull origin main --allow-unrelated-histories 2>/dev/null || echo "No remote to pull from or nothing to merge"
 
-# Step 7: Push changes to remote
+# Step 7: Push to remote
 echo "Pushing to remote..."
 git push -u origin main
 
