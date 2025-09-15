@@ -5,6 +5,15 @@
 # -----------------------------------
 
 # Step 1: Initialize Git repository if not already initialized
+
+# If user calls with subcommand (manual mode)
+if [[ $# -gt 0 ]]; then
+  case "$1" in
+    ensure-readme) ensure_readme; exit 0 ;;
+    tag) tag; exit 0 ;;
+  esac
+fi
+
 if [ ! -d ".git" ]; then
     echo "Initializing Git repository..."
     git init
@@ -25,6 +34,48 @@ git branch -M main
 
 # Step 4: Stage all files
 git add .
+
+# Add README.md 
+# --- Extra helpers ---
+
+ensure_readme() {
+  if [ ! -f README.md ]; then
+    cat > README.md <<'EOF'
+# Project Title
+
+Describe your project here.
+
+## Setup
+
+Explain installation / usage.
+
+## License
+
+Add license details here.
+EOF
+
+    echo "README.md created. Opening in nvim so you can edit..."
+    nvim README.md
+
+    git add README.md
+    git commit -m "chore: add README.md (auto-generated and edited)" || true
+    echo "README.md added and committed"
+  else
+    echo "README.md already exists"
+  fi
+}
+
+tag() {
+  local latest newtag
+  latest=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+  IFS='.' read -r major minor patch <<< "${latest#v}"
+  patch=$((patch+1))
+  newtag="v$major.$minor.$patch"
+
+  git tag -a "$newtag" -m "release: $newtag — recommended update"
+  git push origin "$newtag"
+  echo "Tagged and pushed $newtag"
+}
 
 # Step 5: Commit changes
 read -p "Enter commit message: " commit_msg
