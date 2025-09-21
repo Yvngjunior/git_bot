@@ -103,4 +103,8 @@ echo "✅ All done! Changes pushed to remote."
 # greeting 
 echo "Hello from the feature-update branch!"
 
+
 echo "This is from the MAIN branch!"
+
+echo "This is from the FEATURE branch!"
+
